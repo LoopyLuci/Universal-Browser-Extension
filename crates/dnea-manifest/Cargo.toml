@@ -1,0 +1,26 @@
+[package]
+name        = "dnea-manifest"
+version.workspace = true
+description = "DNEA module manifest: schema, canonicalization, signing, validation."
+edition.workspace     = true
+rust-version.workspace = true
+license.workspace     = true
+
+[dependencies]
+dnea-core     = { path = "../dnea-core" }
+base64        = { workspace = true }
+ed25519-dalek = { workspace = true }
+jsonschema    = { workspace = true }
+once_cell     = { workspace = true }
+regex         = { workspace = true }
+serde         = { workspace = true }
+serde_json    = { workspace = true }
+sha2          = { workspace = true }
+thiserror     = { workspace = true }
+time          = { workspace = true }
+uuid          = { workspace = true }
+
+[dev-dependencies]
+ed25519-dalek = { workspace = true }
+rand          = { workspace = true }
+tempfile      = { workspace = true }

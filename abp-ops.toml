@@ -1,0 +1,175 @@
+# What this project can do, as ABP operations (abp_modkit). Edit freely: adopting it again
+# (`python -m abp_modkit adopt .`) keeps edited summaries, settings and ops you added, and picks up new
+# routes and commands.
+
+[service]
+id = "universal-browser-extension"
+name = "Universal Browser Extension"
+description = "One install. Every browser. Capability-enforced at the Wasm boundary."
+
+[[op]]
+id = "dnea_nm_bridge.run"
+kind = "cmd"
+summary = "Run `dnea-nm-bridge` with the given arguments"
+argv = ["{target}/release/dnea-nm-bridge{exe}"]
+timeout_s = 600
+extra_args = true
+
+[[op]]
+id = "bridge.run"
+kind = "cmd"
+summary = "Run `bridge` with the given arguments"
+argv = ["{target}/release/bridge{exe}"]
+timeout_s = 600
+extra_args = true
+
+[[op]]
+id = "dnea_daemon.run"
+kind = "cmd"
+summary = "Run `dnea-daemon` with the given arguments"
+argv = ["{target}/release/dnea-daemon{exe}"]
+timeout_s = 600
+extra_args = true
+
+[[op]]
+id = "dnea.validate"
+kind = "cmd"
+summary = "`dnea validate`"
+argv = ["{target}/release/dnea{exe}", "validate"]
+timeout_s = 600
+extra_args = true
+
+[[op]]
+id = "dnea.sign"
+kind = "cmd"
+summary = "`dnea sign`"
+argv = ["{target}/release/dnea{exe}", "sign"]
+timeout_s = 600
+extra_args = true
+
+[[op]]
+id = "dnea.verify"
+kind = "cmd"
+summary = "`dnea verify`"
+argv = ["{target}/release/dnea{exe}", "verify"]
+timeout_s = 600
+extra_args = true
+
+[[op]]
+id = "dnea.keygen"
+kind = "cmd"
+summary = "`dnea keygen`"
+argv = ["{target}/release/dnea{exe}", "keygen"]
+timeout_s = 600
+extra_args = true
+
+[[op]]
+id = "dnea.register_host"
+kind = "cmd"
+summary = "`dnea register-host`"
+argv = ["{target}/release/dnea{exe}", "register-host"]
+timeout_s = 600
+extra_args = true
+
+[[op]]
+id = "dnea.status"
+kind = "cmd"
+summary = "`dnea status`"
+argv = ["{target}/release/dnea{exe}", "status"]
+timeout_s = 600
+extra_args = true
+
+[[op]]
+id = "dnea.install_module"
+kind = "cmd"
+summary = "`dnea install-module`"
+argv = ["{target}/release/dnea{exe}", "install-module"]
+timeout_s = 600
+extra_args = true
+
+[[op]]
+id = "dnea.doctor"
+kind = "cmd"
+summary = "`dnea doctor`"
+argv = ["{target}/release/dnea{exe}", "doctor"]
+timeout_s = 600
+extra_args = true
+
+[[op]]
+id = "dnea_thin_client.dev"
+kind = "cmd"
+summary = "`npm run dev`: wxt"
+argv = ["npm", "run", "dev"]
+cwd = "thin-client"
+timeout_s = 86400
+background = true
+extra_args = true
+
+[[op]]
+id = "dnea_thin_client.build"
+kind = "cmd"
+summary = "`npm run build`: wxt build"
+argv = ["npm", "run", "build"]
+cwd = "thin-client"
+timeout_s = 3600
+background = true
+extra_args = true
+
+[[op]]
+id = "dnea_thin_client.build_chrome"
+kind = "cmd"
+summary = "`npm run build:chrome`: wxt build -b chrome"
+argv = ["npm", "run", "build:chrome"]
+cwd = "thin-client"
+timeout_s = 3600
+background = true
+extra_args = true
+
+[[op]]
+id = "dnea_thin_client.build_firefox"
+kind = "cmd"
+summary = "`npm run build:firefox`: wxt build -b firefox --mv2"
+argv = ["npm", "run", "build:firefox"]
+cwd = "thin-client"
+timeout_s = 3600
+background = true
+extra_args = true
+
+[[op]]
+id = "dnea_thin_client.build_edge"
+kind = "cmd"
+summary = "`npm run build:edge`: wxt build -b edge"
+argv = ["npm", "run", "build:edge"]
+cwd = "thin-client"
+timeout_s = 3600
+background = true
+extra_args = true
+
+[[op]]
+id = "dnea_thin_client.build_safari"
+kind = "cmd"
+summary = "`npm run build:safari`: wxt build -b safari"
+argv = ["npm", "run", "build:safari"]
+cwd = "thin-client"
+timeout_s = 3600
+background = true
+extra_args = true
+
+[[op]]
+id = "dnea_thin_client.compile"
+kind = "cmd"
+summary = "`npm run compile`: tsc --noEmit"
+argv = ["npm", "run", "compile"]
+cwd = "thin-client"
+timeout_s = 3600
+extra_args = true
+
+[[op]]
+id = "dnea_thin_client.test"
+kind = "cmd"
+summary = "`npm run test`: vitest run"
+argv = ["npm", "run", "test"]
+cwd = "thin-client"
+timeout_s = 3600
+background = true
+extra_args = true

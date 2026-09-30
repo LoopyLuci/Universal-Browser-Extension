@@ -1,0 +1,22 @@
+{
+  "name": "dnea-thin-client",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "wxt",
+    "build": "wxt build",
+    "build:chrome": "wxt build -b chrome",
+    "build:firefox": "wxt build -b firefox --mv2",
+    "build:edge": "wxt build -b edge",
+    "build:safari": "wxt build -b safari",
+    "compile": "tsc --noEmit",
+    "test": "vitest run"
+  },
+  "dependencies": { "wxt": "^0.19.0" },
+  "devDependencies": {
+    "@types/chrome": "^0.0.280",
+    "typescript": "^5.6.0",
+    "vitest": "^2.1.0"
+  }
+}

@@ -1,0 +1,45 @@
+#!/bin/bash
+set -euo pipefail
+
+/usr/local/bin/dnea-daemon --init-key --config /Library/Application\ Support/DNEA/dnea.toml || true
+
+for d in \
+  "/Library/Google/Chrome/NativeMessagingHosts" \
+  "/Library/Microsoft/Edge/NativeMessagingHosts" \
+  "/Library/Application Support/Mozilla/NativeMessagingHosts"; do
+  mkdir -p "$d"
+done
+
+BRIDGE="/Library/Application Support/DNEA/bin/dnea-nm-bridge"
+for spec in \
+  "chrome:/Library/Google/Chrome/NativeMessagingHosts:chrome-extension" \
+  "edge:/Library/Microsoft/Edge/NativeMessagingHosts:chrome-extension" \
+  "firefox:/Library/Application Support/Mozilla/NativeMessagingHosts:moz-extension"; do
+  IFS=":" read -r name dir prefix <<< "$spec"
+  ext_id="abcdefghijklmnopabcdefghijklmnop"
+  [ "$name" = "firefox" ] && ext_id="dnea@dnea.org"
+  cat > "$dir/org.dnea.runtime.json" <<EOF
+{
+  "name": "org.dnea.runtime",
+  "description": "DNEA runtime bridge",
+  "path": "$BRIDGE",
+  "type": "stdio",
+  "allowed_origins": ["$prefix://$ext_id/"],
+  "x-dnea-installed": { "version": "1.0.0", "installed_at": "$(date -u +%Y-%m-%dT%H:%M:%SZ)" }
+}
+EOF
+done
+
+launchctl load -w /Library/LaunchDaemons/org.dnea.runtime.plist
+
+if profiles status -type enrollment 2>/dev/null | grep -q "Enrolled"; then
+  cat > /Library/Managed\ Preferences/com.google.Chrome.plist <<EOF
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0"><dict>
+<key>ExtensionInstallForcelist</key>
+<array><string>abcdefghijklmnopabcdefghijklmnop;https://clients2.google.com/service/update2/crx</string></array>
+</dict></plist>
+EOF
+fi
+exit 0

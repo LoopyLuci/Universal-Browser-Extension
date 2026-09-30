@@ -1,0 +1,26 @@
+[package]
+name        = "dnea-cli"
+version.workspace = true
+description = "DNEA developer CLI."
+edition.workspace     = true
+rust-version.workspace = true
+license.workspace     = true
+
+[[bin]]
+name = "dnea"
+path = "src/main.rs"
+
+[dependencies]
+dnea-config     = { path = "../dnea-config" }
+dnea-core       = { path = "../dnea-core" }
+dnea-manifest   = { path = "../dnea-manifest" }
+dnea-nm-host    = { path = "../dnea-nm-host" }
+anyhow          = { workspace = true }
+base64          = { workspace = true }
+clap            = { workspace = true }
+ed25519-dalek   = { workspace = true }
+rand            = { workspace = true }
+reqwest         = { workspace = true }
+serde_json      = { workspace = true }
+sha2            = { workspace = true }
+tokio           = { workspace = true }

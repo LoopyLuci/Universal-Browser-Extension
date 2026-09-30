@@ -1,0 +1,38 @@
+# written by abp_modkit (`python -m abp_modkit adopt` refreshes this file; delete this line to keep it as it is)
+# How AgenticBotPlatform (ABP) builds, runs and drives this project as a module. Operations: abp-ops.toml.
+
+[module]
+id = "universal-browser-extension"
+name = "Universal Browser Extension"
+repo = "https://github.com/LoopyLuci/Universal-Browser-Extension.git"
+branch = "main"
+api = 1
+area = "building"
+description = "One install. Every browser. Capability-enforced at the Wasm boundary."
+
+[checkout]
+marker = ["abp-module.toml", "abp-ops.toml"]
+
+[toolchain]
+require = [{ tool = "cargo", min = "1.75", url = "https://rustup.rs" }, { tool = "node", min = "20", url = "https://nodejs.org" }]
+
+[build]
+steps = [
+  ["cargo", "build", "--release", "-p", "dnea-nm-host", "-p", "dnea-daemon", "-p", "dnea-cli"],
+  ["npm", "install", "--prefix", "thin-client"],
+  ["npm", "run", "build", "--prefix", "thin-client"],
+]
+outputs = ["{target}/release/dnea-nm-bridge{exe}", "{target}/release/bridge{exe}", "{target}/release/dnea-daemon{exe}", "{target}/release/dnea{exe}"]
+env = { CARGO_TARGET_DIR = "{target}" }
+
+[hub]
+# abp_modkit's hub: the operations in abp-ops.toml (routes, commands, the project's server)
+start = ["{abp_python}", "-m", "abp_modkit", "serve", "--spec", "{repo}/abp-ops.toml", "--project", "{repo}", "--home", "{data}", "--var", "target={target}"]
+control_file = "{data}/control.json"
+start_timeout_s = 30
+
+[mcp]
+stdio = ["{abp_python}", "-m", "abp_modkit", "mcp", "--home", "{data}"]
+
+[ui]
+panel = "operations"

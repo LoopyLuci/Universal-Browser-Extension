@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<installer-gui-script minSpecVersion="2">
+  <title>DNEA Runtime</title>
+  <organization>org.dnea</organization>
+  <domains enable_localSystem="true" />
+  <options customize="allow" require-scripts="false" />
+  <choices-outline>
+    <line choice="default"><line choice="org.dnea.runtime" /></line>
+  </choices-outline>
+  <choice id="default" />
+  <choice id="org.dnea.runtime" visible="true" title="DNEA Runtime">
+    <pkg-ref id="org.dnea.runtime" />
+  </choice>
+  <pkg-ref id="org.dnea.runtime" version="1.0.0">dnea-component.pkg</pkg-ref>
+</installer-gui-script>

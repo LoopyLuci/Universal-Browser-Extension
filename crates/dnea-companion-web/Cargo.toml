@@ -1,0 +1,7 @@
+[package]
+name        = "dnea-companion-web"
+version.workspace = true
+description = "Embedded companion UI assets."
+edition.workspace     = true
+rust-version.workspace = true
+license.workspace     = true

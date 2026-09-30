@@ -1,0 +1,26 @@
+[paths]
+state_dir = "/var/lib/dnea"
+run_dir = "/run/dnea"
+log_dir = "/var/log/dnea"
+
+[modules]
+allow_dev = false
+pooling_slots = 16
+
+[nm]
+max_connections = 64
+mtu = 1048576
+
+[api]
+bind = "127.0.0.1:0"
+token_ttl_secs = 600
+
+[audit]
+retention_days = 30
+max_bytes_per_module = 67108864
+sinks = ["sqlite", "file"]
+
+[watchdog]
+epoch_interval_ms = 100
+default_fuel = 10000000
+default_timeout_ms = 30000

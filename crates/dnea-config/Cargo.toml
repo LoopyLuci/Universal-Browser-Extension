@@ -1,0 +1,16 @@
+[package]
+name        = "dnea-config"
+version.workspace = true
+description = "DNEA configuration loading."
+edition.workspace     = true
+rust-version.workspace = true
+license.workspace     = true
+
+[dependencies]
+dnea-core   = { path = "../dnea-core" }
+anyhow      = { workspace = true }
+directories = { workspace = true }
+serde       = { workspace = true }
+serde_json  = { workspace = true }
+thiserror   = { workspace = true }
+toml        = { workspace = true }

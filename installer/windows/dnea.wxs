@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://wixtoolset.org/schemas/v4/wxs">
+  <Package Name="DNEA Runtime" Manufacturer="DNEA Project"
+    Version="1.0.0.0" UpgradeCode="A2B4C6D8-E0F2-4051-8263-A4B6C8D0E2F4"
+    Scope="perMachine">
+
+    <MajorUpgrade DowngradeErrorMessage="A newer version of DNEA is already installed." />
+    <MediaTemplate EmbedCab="yes" />
+
+    <StandardDirectory Id="ProgramFiles64Folder">
+      <Directory Id="INSTALLFOLDER" Name="DNEA">
+        <Component Id="DaemonExe" Guid="*">
+          <File Id="dnea-daemon.exe" Source="$(var.StageDir)\dnea-daemon.exe" KeyPath="yes" />
+          <ServiceInstall Id="DNEAService" Name="DNEA" DisplayName="DNEA Runtime"
+            Description="Device-Native Extension Architecture runtime"
+            Start="auto" Type="ownProcess" ErrorControl="normal" Account="LocalSystem">
+            <ServiceConfig FailureActions="restart/60000/restart/60000/restart/60000"
+              FailureResetPeriod="86400" OnInstall="yes" OnReinstall="yes" />
+          </ServiceInstall>
+          <ServiceControl Id="DNEAServiceControl" Name="DNEA"
+            Start="install" Stop="both" Remove="uninstall" Wait="yes" />
+        </Component>
+        <Component Id="BridgeExe" Guid="*">
+          <File Id="dnea-nm-bridge.exe" Source="$(var.StageDir)\dnea-nm-bridge.exe" KeyPath="yes" />
+        </Component>
+        <Component Id="CliExe" Guid="*">
+          <File Id="dnea.exe" Source="$(var.StageDir)\dnea.exe" KeyPath="yes" />
+          <Environment Id="PATH" Name="PATH" Value="[INSTALLFOLDER]" Part="last" Action="set" Permanent="no" System="yes" />
+        </Component>
+      </Directory>
+    </StandardDirectory>
+
+    <StandardDirectory Id="CommonAppDataFolder">
+      <Directory Id="DNEA_DATA" Name="DNEA">
+        <Directory Id="DNEA_NM" Name="nm" />
+        <Directory Id="DNEA_STATE" Name="state" />
+      </Directory>
+    </StandardDirectory>
+
+    <Component Id="NMChrome" Guid="*" Directory="DNEA_NM">
+      <File Id="nmChrome.json" Source="$(var.StageDir)\nm\org.dnea.runtime.chrome.json" />
+      <RegistryKey Root="HKLM" Key="SOFTWARE\Google\Chrome\NativeMessagingHosts\org.dnea.runtime">
+        <RegistryValue Type="string" Value="[DNEA_NM]org.dnea.runtime.chrome.json" />
+      </RegistryKey>
+    </Component>
+    <Component Id="NMEdge" Guid="*" Directory="DNEA_NM">
+      <File Id="nmEdge.json" Source="$(var.StageDir)\nm\org.dnea.runtime.edge.json" />
+      <RegistryKey Root="HKLM" Key="SOFTWARE\Microsoft\Edge\NativeMessagingHosts\org.dnea.runtime">
+        <RegistryValue Type="string" Value="[DNEA_NM]org.dnea.runtime.edge.json" />
+      </RegistryKey>
+    </Component>
+    <Component Id="NMFirefox" Guid="*" Directory="DNEA_NM">
+      <File Id="nmFirefox.json" Source="$(var.StageDir)\nm\org.dnea.runtime.firefox.json" />
+      <RegistryKey Root="HKLM" Key="SOFTWARE\Mozilla\NativeMessagingHosts\org.dnea.runtime">
+        <RegistryValue Type="string" Value="[DNEA_NM]org.dnea.runtime.firefox.json" />
+      </RegistryKey>
+    </Component>
+    <Component Id="NMBrave" Guid="*" Directory="DNEA_NM">
+      <File Id="nmBrave.json" Source="$(var.StageDir)\nm\org.dnea.runtime.brave.json" />
+      <RegistryKey Root="HKLM" Key="SOFTWARE\BraveSoftware\Brave-Browser\NativeMessagingHosts\org.dnea.runtime">
+        <RegistryValue Type="string" Value="[DNEA_NM]org.dnea.runtime.brave.json" />
+      </RegistryKey>
+    </Component>
+
+    <Component Id="ForcePolicyChrome" Guid="*" Condition="POLICY=1">
+      <RegistryKey Root="HKLM" Key="SOFTWARE\Policies\Google\Chrome\ExtensionInstallForcelist">
+        <RegistryValue Name="100" Type="string"
+          Value="abcdefghijklmnopabcdefghijklmnop;https://clients2.google.com/service/update2/crx" />
+      </RegistryKey>
+    </Component>
+    <Component Id="ForcePolicyEdge" Guid="*" Condition="POLICY=1">
+      <RegistryKey Root="HKLM" Key="SOFTWARE\Policies\Microsoft\Edge\ExtensionInstallForcelist">
+        <RegistryValue Name="100" Type="string"
+          Value="bcdefghijklmnopabcdefghijklmno;https://edge.microsoft.com/extensionwebstorebase/v1/crx" />
+      </RegistryKey>
+    </Component>
+    <Component Id="ForcePolicyFirefox" Guid="*" Condition="POLICY=1">
+      <RegistryKey Root="HKLM" Key="SOFTWARE\Policies\Mozilla\Firefox\Extensions\Install">
+        <RegistryValue Name="100" Type="string" Value="dnea@dnea.org" />
+      </RegistryKey>
+    </Component>
+
+    <Feature Id="Main" Title="DNEA Runtime" Level="1">
+      <ComponentRef Id="DaemonExe" />
+      <ComponentRef Id="BridgeExe" />
+      <ComponentRef Id="CliExe" />
+    </Feature>
+    <Feature Id="BrowserIntegration" Title="Browser Integration" Level="1">
+      <ComponentRef Id="NMChrome" />
+      <ComponentRef Id="NMEdge" />
+      <ComponentRef Id="NMFirefox" />
+      <ComponentRef Id="NMBrave" />
+    </Feature>
+    <Feature Id="EnterprisePolicy" Title="Force-install thin client" Level="1">
+      <ComponentRef Id="ForcePolicyChrome" />
+      <ComponentRef Id="ForcePolicyEdge" />
+      <ComponentRef Id="ForcePolicyFirefox" />
+    </Feature>
+
+    <CustomAction Id="GenerateMasterKey"
+      ExeCommand="--init-key --config &quot;[DNEA_STATE]dnea.toml&quot;"
+      FileRef="dnea-daemon.exe" Execute="deferred" Impersonate="no" Return="ignore" />
+    <InstallExecuteSequence>
+      <Custom Action="GenerateMasterKey" After="InstallFiles" Condition="NOT Installed" />
+    </InstallExecuteSequence>
+
+    <Property Id="POLICY" Value="0" />
+  </Package>
+</Wix>

@@ -1,0 +1,44 @@
+name: Release
+on:
+  push: { tags: ["v*"] }
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        include:
+          - { os: ubuntu-latest, artifact: linux-amd64 }
+          - { os: macos-latest, artifact: macos-universal }
+          - { os: windows-latest, artifact: windows-amd64 }
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2
+      - run: cargo build --release -p dnea-daemon -p dnea-nm-host -p dnea-cli
+      - if: matrix.os == 'ubuntu-latest'
+        run: |
+          go install github.com/goreleaser/nfpm/v2/cmd/nfpm@latest
+          ./installer/linux/build.sh
+      - if: matrix.os == 'macos-latest'
+        run: ./installer/macos/build.sh
+      - if: matrix.os == 'windows-latest'
+        shell: pwsh
+        run: |
+          dotnet tool install --global wix
+          ./installer/windows/build.ps1
+      - uses: actions/upload-artifact@v4
+        with:
+          name: dnea-${{ matrix.artifact }}
+          path: build/out/*
+
+  publish:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+      - uses: softprops/action-gh-release@v2
+        with:
+          files: dnea-*/*
+          generate_release_notes: true

@@ -1,0 +1,30 @@
+[package]
+name        = "dnea-session"
+version.workspace = true
+description = "The DNEA runtime hub."
+edition.workspace     = true
+rust-version.workspace = true
+license.workspace     = true
+
+[dependencies]
+dnea-core        = { path = "../dnea-core" }
+dnea-manifest    = { path = "../dnea-manifest" }
+dnea-module-host = { path = "../dnea-module-host" }
+dnea-nm-host     = { path = "../dnea-nm-host" }
+anyhow           = { workspace = true }
+async-trait      = { workspace = true }
+base64           = { workspace = true }
+ed25519-dalek    = { workspace = true }
+parking_lot      = { workspace = true }
+serde            = { workspace = true }
+serde_json       = { workspace = true }
+sha2             = { workspace = true }
+thiserror        = { workspace = true }
+tokio            = { workspace = true }
+tracing          = { workspace = true }
+uuid             = { workspace = true }
+
+[dev-dependencies]
+rand          = { workspace = true }
+tempfile      = { workspace = true }
+wasmtime      = { workspace = true }

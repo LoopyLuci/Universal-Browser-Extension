@@ -1,0 +1,104 @@
+package dnea:host@1.0.0;
+
+interface types {
+  enum log-level { trace, debug, info, warn, error }
+
+  record capability-grant {
+    id: string,
+    constraints-json: option<string>,
+  }
+
+  variant host-error {
+    denied(string),
+    not-granted(string),
+    unavailable(string),
+    timeout(u64),
+    rate-limited(u32),
+    internal(string),
+  }
+
+  record module-info {
+    id: string,
+    version: string,
+    storage-schema-version: u32,
+    granted: list<capability-grant>,
+  }
+}
+
+interface log {
+  use types.{log-level};
+  emit: func(level: log-level, message: string, fields-json: option<string>);
+}
+
+interface storage {
+  use types.{host-error};
+  get:    func(key: string) -> result<option<list<u8>>, host-error>;
+  put:    func(key: string, value: list<u8>) -> result<_, host-error>;
+  delete: func(key: string) -> result<_, host-error>;
+  list-keys: func(prefix: string) -> result<list<string>, host-error>;
+}
+
+interface schedule {
+  use types.{host-error};
+  after:  func(delay-ms: u64, callback-id: string) -> result<u64, host-error>;
+  every:  func(interval-ms: u64, callback-id: string) -> result<u64, host-error>;
+  cancel: func(handle: u64) -> result<_, host-error>;
+}
+
+interface tabs {
+  use types.{host-error};
+  record tab {
+    id: u64,
+    url: string,
+    title: string,
+    active: bool,
+    window-id: u64,
+  }
+  query:  func(filter-json: string) -> result<list<tab>, host-error>;
+  update: func(tab-id: u64, props-json: string) -> result<_, host-error>;
+  create: func(props-json: string) -> result<tab, host-error>;
+  close:  func(tab-id: u64) -> result<_, host-error>;
+}
+
+interface net {
+  use types.{host-error};
+  request: func(req-json: string) -> result<list<u8>, host-error>;
+}
+
+interface ui {
+  use types.{host-error};
+  set-panel-html: func(panel-id: string, html: string) -> result<_, host-error>;
+  notify:         func(title: string, body: string) -> result<_, host-error>;
+}
+
+interface crypto {
+  use types.{host-error};
+  sign:   func(key-id: string, data: list<u8>) -> result<list<u8>, host-error>;
+  verify: func(key-id: string, data: list<u8>, sig: list<u8>) -> result<bool, host-error>;
+}
+
+interface lifecycle {
+  use types.{host-error};
+  activate:     func() -> result<_, host-error>;
+  deactivate:   func() -> result<_, host-error>;
+  upgrade:      func(from-version: string, from-storage-schema: u32) -> result<_, host-error>;
+  health-check: func() -> result<_, host-error>;
+}
+
+interface module-api {
+  use types.{host-error};
+  invoke: func(method: string, args-json: string) -> result<string, host-error>;
+}
+
+world module {
+  import types;
+  import log;
+  import storage;
+  import schedule;
+  import tabs;
+  import net;
+  import ui;
+  import crypto;
+  export lifecycle;
+  export module-api;
+}

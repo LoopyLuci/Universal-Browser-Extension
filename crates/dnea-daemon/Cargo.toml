@@ -1,0 +1,32 @@
+[package]
+name        = "dnea-daemon"
+version.workspace = true
+description = "DNEA runtime daemon."
+edition.workspace     = true
+rust-version.workspace = true
+license.workspace     = true
+
+[[bin]]
+name = "dnea-daemon"
+path = "src/main.rs"
+
+[dependencies]
+dnea-config        = { path = "../dnea-config" }
+dnea-core          = { path = "../dnea-core" }
+dnea-local-api     = { path = "../dnea-local-api" }
+dnea-manifest      = { path = "../dnea-manifest" }
+dnea-module-host   = { path = "../dnea-module-host" }
+dnea-nm-host       = { path = "../dnea-nm-host" }
+dnea-session       = { path = "../dnea-session" }
+anyhow             = { workspace = true }
+base64             = { workspace = true }
+clap               = { workspace = true }
+rand               = { workspace = true }
+serde_json         = { workspace = true }
+tokio              = { workspace = true }
+tracing            = { workspace = true }
+tracing-subscriber = { workspace = true }
+wasmtime           = { workspace = true }
+
+[target.'cfg(unix)'.dependencies]
+libc = { workspace = true }

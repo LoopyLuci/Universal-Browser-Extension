@@ -1,0 +1,30 @@
+[Unit]
+Description=DNEA runtime
+After=network.target
+Wants=network.target
+
+[Service]
+Type=notify
+ExecStart=/usr/lib/dnea/dnea-daemon --foreground
+Restart=on-failure
+RestartSec=2s
+User=dnea
+Group=dnea
+StateDirectory=dnea
+RuntimeDirectory=dnea
+RuntimeDirectoryMode=0750
+NoNewPrivileges=true
+ProtectSystem=strict
+ProtectHome=read-only
+PrivateTmp=true
+PrivateDevices=true
+ProtectKernelTunables=true
+ProtectKernelModules=true
+ProtectControlGroups=true
+RestrictNamespaces=true
+RestrictSUIDSGID=true
+SystemCallArchitectures=native
+LockPersonality=true
+
+[Install]
+WantedBy=multi-user.target

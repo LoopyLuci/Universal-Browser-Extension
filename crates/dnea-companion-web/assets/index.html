@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self' ws: http://127.0.0.1:*; frame-ancestors 'none'; base-uri 'none'; form-action 'self';">
+<title>DNEA</title>
+<link rel="stylesheet" href="/style.css">
+</head>
+<body>
+<header>
+  <h1>DNEA</h1>
+  <span id="connection" class="badge">connecting…</span>
+</header>
+
+<main>
+  <section id="status-section">
+    <h2>Runtime</h2>
+    <dl id="status"></dl>
+  </section>
+
+  <section id="modules-section">
+    <h2>Modules</h2>
+    <ul id="modules" class="list"></ul>
+  </section>
+
+  <section id="consent-section" hidden>
+    <h2>Pending consent</h2>
+    <ul id="consent" class="list"></ul>
+  </section>
+
+  <section id="events-section">
+    <h2>Events</h2>
+    <ul id="events" class="list small"></ul>
+  </section>
+</main>
+
+<script src="/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,22 @@
+[package]
+name        = "dnea-module-host"
+version.workspace = true
+description = "Wasmtime-based module host for DNEA."
+edition.workspace     = true
+rust-version.workspace = true
+license.workspace     = true
+
+[dependencies]
+dnea-abi    = { path = "../dnea-abi" }
+dnea-core   = { path = "../dnea-core" }
+anyhow      = { workspace = true }
+async-trait = { workspace = true }
+serde       = { workspace = true }
+serde_json  = { workspace = true }
+tokio       = { workspace = true }
+tracing     = { workspace = true }
+wasmtime    = { workspace = true }
+
+[dev-dependencies]
+tempfile = { workspace = true }
+tokio    = { workspace = true, features = ["macros", "rt-multi-thread", "time", "fs"] }

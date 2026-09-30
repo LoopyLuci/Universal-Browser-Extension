@@ -1,0 +1,33 @@
+[package]
+name        = "dnea-local-api"
+version.workspace = true
+description = "DNEA Local API and embedded companion UI."
+edition.workspace     = true
+rust-version.workspace = true
+license.workspace     = true
+
+[dependencies]
+dnea-core          = { path = "../dnea-core" }
+dnea-session       = { path = "../dnea-session" }
+dnea-companion-web = { path = "../dnea-companion-web" }
+anyhow             = { workspace = true }
+async-trait        = { workspace = true }
+axum               = { workspace = true }
+hmac               = { workspace = true }
+jsonwebtoken       = { workspace = true }
+serde              = { workspace = true }
+serde_json         = { workspace = true }
+tokio              = { workspace = true }
+tower              = { workspace = true }
+tower-http         = { workspace = true }
+tracing            = { workspace = true }
+uuid               = { workspace = true }
+time               = { workspace = true }
+rand               = { workspace = true }
+base64             = { workspace = true }
+directories        = { workspace = true }
+
+[dev-dependencies]
+reqwest  = { workspace = true }
+tempfile = { workspace = true }
+tokio    = { workspace = true, features = ["macros", "rt-multi-thread", "time"] }

@@ -1,0 +1,24 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>DNEA consent</title>
+<style>
+body { font: 14px system-ui; margin: 24px; max-width: 480px; }
+h1 { font-size: 16px; margin: 0 0 12px; }
+.reason { color: #555; margin: 12px 0; }
+button { padding: 6px 12px; margin-right: 8px; }
+</style>
+</head>
+<body>
+<h1 id="title">Loading…</h1>
+<div class="reason" id="reason"></div>
+<pre id="constraints"></pre>
+<div>
+<button id="allow">Allow for this version</button>
+<button id="always">Always allow</button>
+<button id="deny">Deny</button>
+</div>
+<script type="module" src="./main.ts"></script>
+</body>
+</html>

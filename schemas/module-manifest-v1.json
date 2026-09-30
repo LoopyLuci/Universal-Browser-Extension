@@ -1,0 +1,223 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://dnea.org/schemas/module-manifest/v1.json",
+  "title": "DNEA Module Manifest",
+  "type": "object",
+  "required": ["manifestVersion", "id", "version", "runtime", "name", "entrypoints"],
+  "properties": {
+    "manifestVersion": { "const": 1 },
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z0-9]([a-z0-9-]{0,61}[a-z0-9])?(\\.[a-z0-9]([a-z0-9-]{0,61}[a-z0-9])?){1,}$",
+      "maxLength": 255
+    },
+    "version": {
+      "type": "string",
+      "pattern": "^(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)(-((0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*)(\\.(0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(\\+([0-9a-zA-Z-]+(\\.[0-9a-zA-Z-]+)*))?$"
+    },
+    "runtime": { "type": "string", "minLength": 1 },
+    "name": { "type": "string", "minLength": 1, "maxLength": 64 },
+    "description": { "type": "string", "maxLength": 512 },
+    "homepage": { "type": "string", "format": "uri" },
+    "license": { "type": "string" },
+    "authors": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["name"],
+        "properties": {
+          "name": { "type": "string" },
+          "email": { "type": "string", "format": "email" },
+          "url": { "type": "string", "format": "uri" }
+        },
+        "additionalProperties": true
+      },
+      "maxItems": 32
+    },
+    "dev": { "type": "boolean", "default": false },
+    "signature": {
+      "type": "object",
+      "required": ["payloadDigest", "signers"],
+      "properties": {
+        "payloadDigest": {
+          "type": "object",
+          "required": ["alg", "value"],
+          "properties": {
+            "alg": { "enum": ["sha-256", "sha-384", "sha-512"] },
+            "value": { "type": "string" }
+          },
+          "additionalProperties": true
+        },
+        "signers": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 8,
+          "items": {
+            "type": "object",
+            "required": ["keyId", "alg", "value"],
+            "properties": {
+              "keyId": { "type": "string" },
+              "alg": { "enum": ["EdDSA", "ES256", "ES384", "PS256"] },
+              "value": { "type": "string" },
+              "role": { "enum": ["author", "publisher", "reviewer", "timestamp"], "default": "author" },
+              "signedAt": { "type": "string" },
+              "expiresAt": { "type": "string" }
+            },
+            "additionalProperties": true
+          }
+        },
+        "transparency": { "type": "object" }
+      },
+      "additionalProperties": true
+    },
+    "entrypoints": {
+      "type": "object",
+      "minProperties": 1,
+      "additionalProperties": {
+        "type": "object",
+        "required": ["kind", "path", "digest"],
+        "properties": {
+          "kind": { "enum": ["wasm", "js", "native"] },
+          "path": { "type": "string", "pattern": "^(?!/)(?!.*\\.\\.)[A-Za-z0-9._/-]+$" },
+          "digest": {
+            "type": "object",
+            "required": ["alg", "value"],
+            "properties": {
+              "alg": { "enum": ["sha-256", "sha-384", "sha-512"] },
+              "value": { "type": "string" }
+            },
+            "additionalProperties": true
+          },
+          "abi": { "type": "string", "default": "1.0.0" },
+          "exports": { "type": "array", "items": { "type": "string" } },
+          "sandboxProfile": { "type": "string" }
+        },
+        "additionalProperties": true
+      }
+    },
+    "capabilities": {
+      "type": "object",
+      "required": ["request"],
+      "properties": {
+        "request": {
+          "type": "array",
+          "maxItems": 256,
+          "items": {
+            "type": "object",
+            "required": ["id"],
+            "properties": {
+              "id": { "type": "string", "pattern": "^[a-z][a-z0-9]*(:[a-z0-9*_-]+)+$" },
+              "reason": { "type": "string", "maxLength": 256 },
+              "consent": { "enum": ["auto", "prompt", "per-use", "admin", "forbidden"] },
+              "constraints": { "type": ["object", "null"] },
+              "required": { "type": "boolean", "default": true },
+              "audit": { "enum": ["none", "metadata", "full"] },
+              "policyKey": { "type": "string" }
+            },
+            "additionalProperties": true
+          }
+        },
+        "deny": {
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      },
+      "additionalProperties": true
+    },
+    "dependencies": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "required": ["version"],
+        "properties": {
+          "version": { "type": "string" },
+          "optional": { "type": "boolean", "default": false },
+          "capabilities": { "type": "array", "items": { "type": "string" } }
+        },
+        "additionalProperties": true
+      }
+    },
+    "conflicts": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id"],
+        "properties": {
+          "id": { "type": "string" },
+          "version": { "type": "string" },
+          "reason": { "type": "string", "maxLength": 256 }
+        },
+        "additionalProperties": true
+      }
+    },
+    "lifecycle": { "type": "object" },
+    "migrations": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["from", "to", "entrypoint", "export"],
+        "properties": {
+          "from": { "type": "integer", "minimum": 1 },
+          "to": { "type": "integer", "minimum": 1 },
+          "entrypoint": { "type": "string" },
+          "export": { "type": "string" },
+          "reversible": { "type": "boolean", "default": false },
+          "timeoutMs": { "type": "integer", "minimum": 1000, "default": 60000 }
+        },
+        "additionalProperties": true
+      }
+    },
+    "storage": {
+      "type": "object",
+      "properties": {
+        "storageSchemaVersion": { "type": "integer", "minimum": 1, "default": 1 },
+        "encrypted": { "type": "boolean", "default": true },
+        "quotaBytes": { "type": "integer", "minimum": 1024, "default": 10485760 },
+        "sharedNamespaces": { "type": "array", "items": { "type": "string" } },
+        "exportable": { "type": "boolean", "default": false }
+      },
+      "additionalProperties": true
+    },
+    "ui": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "kind", "entrypoint"],
+        "properties": {
+          "id": { "type": "string" },
+          "kind": { "enum": ["panel", "popover", "toolbar-button", "context-menu", "command", "notification", "content-overlay", "options-page", "devtools-panel"] },
+          "entrypoint": { "type": "string" },
+          "surfaces": { "type": "array", "items": { "enum": ["companion", "webext", "overlay", "cli"] } },
+          "title": { "type": "string", "maxLength": 64 },
+          "icon": { "type": "string" },
+          "origins": { "type": "array", "items": { "type": "string" } },
+          "keybinding": { "type": "object" },
+          "order": { "type": "integer" }
+        },
+        "additionalProperties": true
+      }
+    },
+    "settings": { "type": "object" },
+    "sandbox": { "type": "object" },
+    "resources": { "type": "object" },
+    "audit": { "type": "object" },
+    "update": { "type": "object" },
+    "i18n": { "type": "object" },
+    "dynamicOriginGrants": {
+      "type": "object",
+      "required": ["enabled"],
+      "properties": {
+        "enabled": { "type": "boolean" },
+        "maxOrigins": { "type": "integer", "minimum": 1, "maximum": 4096, "default": 256 },
+        "consent": { "enum": ["prompt", "per-use"], "default": "per-use" },
+        "reason": { "type": "string", "maxLength": 256 }
+      },
+      "additionalProperties": true
+    },
+    "signaturePolicy": { "type": "object" }
+  },
+  "patternProperties": {
+    "^x-": {}
+  },
+  "additionalProperties": true
+}
